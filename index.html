@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breakfast Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --chalk-white: #f0ece0;
+    --chalk-cream: #e8d9b5;
+    --chalk-tan: #c9a96e;
+    --chalk-gold: #d4a853;
+    --board-dark: #1a1a1a;
+    --board-mid: #222222;
+    --board-light: #2a2a2a;
+    --chalk-blue: #8ab4c9;
+    --chalk-pink: #d4917a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--board-dark);
+    color: var(--chalk-white);
+    font-family: 'Special Elite', cursive;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Chalkboard texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 6px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* Chalk border frame */
+  .frame {
+    border: 3px solid rgba(240,236,224,0.25);
+    border-radius: 4px;
+    padding: 30px 24px;
+    position: relative;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.4), 0 0 0 8px rgba(240,236,224,0.05);
+  }
+
+  .frame::before, .frame::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(240,236,224,0.12);
+    border-radius: 2px;
+  }
+  .frame::before { inset: 6px; }
+  .frame::after { inset: 10px; }
+
+  /* Corner decorations */
+  .corner {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: rgba(240,236,224,0.5);
+    border-style: solid;
+  }
+  .corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
+  .corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; }
+  .corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; }
+  .corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+
+  .header-illustrations {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .illus { font-size: 2.2rem; opacity: 0.85; filter: grayscale(0.3); }
+
+  .title-breakfast {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 600;
+    font-size: clamp(2.4rem, 8vw, 4.2rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--chalk-cream);
+    text-shadow:
+      2px 2px 0 rgba(0,0,0,0.5),
+      0 0 30px rgba(212,168,83,0.15);
+    line-height: 1;
+  }
+
+  .title-menu {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(2rem, 7vw, 3.6rem);
+    font-weight: 700;
+    color: var(--chalk-gold);
+    letter-spacing: 0.05em;
+    text-shadow: 2px 3px 0 rgba(0,0,0,0.4);
+    line-height: 1;
+    display: block;
+    margin-top: -6px;
+  }
+
+  .chalk-line {
+    height: 8px;
+    background: linear-gradient(90deg,
+      transparent 0%, rgba(201,169,110,0.6) 20%,
+      rgba(212,168,83,0.9) 50%,
+      rgba(201,169,110,0.6) 80%, transparent 100%);
+    border-radius: 4px;
+    margin: 10px auto 0;
+    max-width: 340px;
+    filter: blur(0.5px);
+  }
+
+  /* Section header */
+  .section-title {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    color: var(--chalk-gold);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::before, .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,168,83,0.5), transparent);
+  }
+
+  /* Combos section */
+  .combos-section {
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .combo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(240,236,224,0.12);
+    font-size: clamp(0.95rem, 3vw, 1.1rem);
+  }
+
+  .combo-item:last-child { border-bottom: none; }
+
+  .combo-name {
+    color: var(--chalk-white);
+    flex: 1;
+    padding-right: 10px;
+  }
+
+  .combo-dots {
+    flex: 1;
+    border-bottom: 1px dotted rgba(240,236,224,0.25);
+    margin: 0 8px 4px;
+    min-width: 20px;
+  }
+
+  .combo-price {
+    color: var(--chalk-gold);
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* OJ callout */
+  .oj-callout {
+    text-align: center;
+    margin: 20px 0 28px;
+    padding: 14px 20px;
+    border: 1px dashed rgba(212,168,83,0.4);
+    border-radius: 4px;
+    background: rgba(212,168,83,0.05);
+  }
+
+  .oj-callout p {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+    color: var(--chalk-cream);
+    letter-spacing: 0.05em;
+  }
+
+  .oj-callout .oj-price {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    color: var(--chalk-gold);
+    display: block;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  /* Two column layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 40px;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 560px) {
+    .two-col { grid-template-columns: 1fr; gap: 28px; }
+  }
+
+  .menu-section {
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(240,236,224,0.1);
+    font-size: clamp(0.88rem, 2.8vw, 1rem);
+    gap: 8px;
+  }
+
+  .menu-item:last-child { border-bottom: none; }
+
+  .item-name {
+    color: var(--chalk-white);
+    flex: 1;
+  }
+
+  .item-price {
+    color: var(--chalk-gold);
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1rem, 3.2vw, 1.2rem);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(240,236,224,0.15);
+    margin: 28px 0;
+  }
+
+  /* Chalk smudge decorations */
+  .smudge {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.04;
+    pointer-events: none;
+  }
+  .smudge-1 { width: 300px; height: 200px; background: var(--chalk-gold); top: 5%; right: -10%; }
+  .smudge-2 { width: 250px; height: 250px; background: var(--chalk-blue); bottom: 20%; left: -8%; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(240,236,224,0.12);
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    color: rgba(240,236,224,0.4);
+    letter-spacing: 0.1em;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .combos-section { animation-delay: 0.1s; }
+  .oj-callout { animation: fadeUp 0.6s 0.25s ease both; }
+  .menu-section:nth-child(1) { animation-delay: 0.35s; }
+  .menu-section:nth-child(2) { animation-delay: 0.45s; }
+
+  .header { animation: fadeUp 0.7s ease both; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="frame">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="smudge smudge-1"></div>
+    <div class="smudge smudge-2"></div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-illustrations">
+        <span class="illus">🧋</span>
+        <div>
+          <div class="title-breakfast">Breakfast</div>
+          <span class="title-menu">menu</span>
+        </div>
+        <span class="illus">🍩</span>
+      </div>
+      <div class="chalk-line"></div>
+    </div>
+
+    <!-- Combos -->
+    <div class="combos-section">
+      <div class="section-title">☕ Breakfast Combos</div>
+      <div class="combo-item">
+        <span class="combo-name">Coffee or tea served with toast or donut</span>
+        <span class="combo-dots"></span>
+        <span class="combo-price">$2.50</span>
+      </div>
+      <div class="combo-item">
+        <span class="combo-name">Coffee or tea with a breakfast sandwich</span>
+        <span class="combo-dots"></span>
+        <span class="combo-price">$3.60</span>
+      </div>
+      <div class="combo-item">
+        <span class="combo-name">Coffee or tea with pancakes</span>
+        <span class="combo-dots"></span>
+        <span class="combo-price">$4.50</span>
+      </div>
+    </div>
+
+    <!-- OJ callout -->
+    <div class="oj-callout">
+      <p>Add orange juice for <span class="oj-price">$1 🍊</span></p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Two column: Savory + Drinks -->
+    <div class="two-col">
+      <div class="menu-section">
+        <div class="section-title" style="font-size:1rem;">🥪 Savory Snacks</div>
+        <div class="menu-item"><span class="item-name">Egg &amp; cheese biscuit</span><span class="item-price">$1.80</span></div>
+        <div class="menu-item"><span class="item-name">Ham &amp; Egg Sandwich</span><span class="item-price">$1.80</span></div>
+        <div class="menu-item"><span class="item-name">Turkey &amp; cheddar slider</span><span class="item-price">$1.00</span></div>
+        <div class="menu-item"><span class="item-name">Bacon &amp; egg sandwich</span><span class="item-price">$1.50</span></div>
+      </div>
+
+      <div class="menu-section">
+        <div class="section-title" style="font-size:1rem;">☕ Drinks</div>
+        <div class="menu-item"><span class="item-name">Coffee / Tea</span><span class="item-price">$1.50</span></div>
+        <div class="menu-item"><span class="item-name">Milk</span><span class="item-price">$1.50</span></div>
+        <div class="menu-item"><span class="item-name">Hot chocolate</span><span class="item-price">$2.20</span></div>
+        <div class="menu-item"><span class="item-name">Chocolate milk</span><span class="item-price">$2.30</span></div>
+        <div class="menu-item"><span class="item-name">Cappuccino</span><span class="item-price">$1.70</span></div>
+        <div class="menu-item"><span class="item-name">Espresso with milk</span><span class="item-price">$1.70</span></div>
+        <div class="menu-item"><span class="item-name">Fresh orange juice</span><span class="item-price">$4.10</span></div>
+        <div class="menu-item"><span class="item-name">Bottled juice</span><span class="item-price">$1.50</span></div>
+        <div class="menu-item"><span class="item-name">Milkshakes</span><span class="item-price">$4.20</span></div>
+        <div class="menu-item"><span class="item-name">Soft drinks</span><span class="item-price">$1.50</span></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Sweet options full width -->
+    <div class="menu-section" style="animation-delay:0.55s;">
+      <div class="section-title">🧁 Sweet Options</div>
+      <div class="two-col" style="margin-bottom:0;">
+        <div>
+          <div class="menu-item"><span class="item-name">Fresh fruit cup</span><span class="item-price">$2.50</span></div>
+          <div class="menu-item"><span class="item-name">Chocolate chip pancakes</span><span class="item-price">$3.20</span></div>
+          <div class="menu-item"><span class="item-name">Waffles with syrup</span><span class="item-price">$3.50</span></div>
+          <div class="menu-item"><span class="item-name">Apple pie</span><span class="item-price">$3.90</span></div>
+        </div>
+        <div>
+          <div class="menu-item"><span class="item-name">Banana bread</span><span class="item-price">$3.90</span></div>
+          <div class="menu-item"><span class="item-name">Blueberry muffin</span><span class="item-price">$3.90</span></div>
+          <div class="menu-item"><span class="item-name">Brownie with ice cream</span><span class="item-price">$4.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">✦ Good food, great mornings ✦</div>
+  </div>
+</div>
+</body>
+</html>
