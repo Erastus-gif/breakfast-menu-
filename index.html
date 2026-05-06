@@ -3,404 +3,399 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Breakfast Menu</title>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<title>Bianca's Kitchen — Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --chalk-white: #f0ece0;
-    --chalk-cream: #e8d9b5;
-    --chalk-tan: #c9a96e;
-    --chalk-gold: #d4a853;
-    --board-dark: #1a1a1a;
-    --board-mid: #222222;
-    --board-light: #2a2a2a;
-    --chalk-blue: #8ab4c9;
-    --chalk-pink: #d4917a;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background-color: var(--board-dark);
-    color: var(--chalk-white);
-    font-family: 'Special Elite', cursive;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Chalkboard texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px),
-      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 6px);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .page-wrapper {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px 16px 60px;
-  }
-
-  /* Chalk border frame */
-  .frame {
-    border: 3px solid rgba(240,236,224,0.25);
-    border-radius: 4px;
-    padding: 30px 24px;
-    position: relative;
-    box-shadow: inset 0 0 60px rgba(0,0,0,0.4), 0 0 0 8px rgba(240,236,224,0.05);
-  }
-
-  .frame::before, .frame::after {
-    content: '';
-    position: absolute;
-    border: 1px solid rgba(240,236,224,0.12);
-    border-radius: 2px;
-  }
-  .frame::before { inset: 6px; }
-  .frame::after { inset: 10px; }
-
-  /* Corner decorations */
-  .corner {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    border-color: rgba(240,236,224,0.5);
-    border-style: solid;
-  }
-  .corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
-  .corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; }
-  .corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; }
-  .corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
-
-  /* Header */
-  .header {
-    text-align: center;
-    margin-bottom: 10px;
-    padding-bottom: 20px;
-    position: relative;
-  }
-
-  .header-illustrations {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-
-  .illus { font-size: 2.2rem; opacity: 0.85; filter: grayscale(0.3); }
-
-  .title-breakfast {
-    font-family: 'Josefin Sans', sans-serif;
-    font-weight: 600;
-    font-size: clamp(2.4rem, 8vw, 4.2rem);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--chalk-cream);
-    text-shadow:
-      2px 2px 0 rgba(0,0,0,0.5),
-      0 0 30px rgba(212,168,83,0.15);
-    line-height: 1;
-  }
-
-  .title-menu {
-    font-family: 'Caveat', cursive;
-    font-size: clamp(2rem, 7vw, 3.6rem);
-    font-weight: 700;
-    color: var(--chalk-gold);
-    letter-spacing: 0.05em;
-    text-shadow: 2px 3px 0 rgba(0,0,0,0.4);
-    line-height: 1;
-    display: block;
-    margin-top: -6px;
-  }
-
-  .chalk-line {
-    height: 8px;
-    background: linear-gradient(90deg,
-      transparent 0%, rgba(201,169,110,0.6) 20%,
-      rgba(212,168,83,0.9) 50%,
-      rgba(201,169,110,0.6) 80%, transparent 100%);
-    border-radius: 4px;
-    margin: 10px auto 0;
-    max-width: 340px;
-    filter: blur(0.5px);
-  }
-
-  /* Section header */
-  .section-title {
-    font-family: 'Josefin Sans', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-size: clamp(1.1rem, 4vw, 1.5rem);
-    color: var(--chalk-gold);
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .section-title::before, .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212,168,83,0.5), transparent);
-  }
-
-  /* Combos section */
-  .combos-section {
-    margin-bottom: 28px;
-    animation: fadeUp 0.6s ease both;
-  }
-
-  .combo-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 10px 0;
-    border-bottom: 1px dashed rgba(240,236,224,0.12);
-    font-size: clamp(0.95rem, 3vw, 1.1rem);
-  }
-
-  .combo-item:last-child { border-bottom: none; }
-
-  .combo-name {
-    color: var(--chalk-white);
-    flex: 1;
-    padding-right: 10px;
-  }
-
-  .combo-dots {
-    flex: 1;
-    border-bottom: 1px dotted rgba(240,236,224,0.25);
-    margin: 0 8px 4px;
-    min-width: 20px;
-  }
-
-  .combo-price {
-    color: var(--chalk-gold);
-    font-family: 'Caveat', cursive;
-    font-size: clamp(1.1rem, 3.5vw, 1.35rem);
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  /* OJ callout */
-  .oj-callout {
-    text-align: center;
-    margin: 20px 0 28px;
-    padding: 14px 20px;
-    border: 1px dashed rgba(212,168,83,0.4);
-    border-radius: 4px;
-    background: rgba(212,168,83,0.05);
-  }
-
-  .oj-callout p {
-    font-family: 'Caveat', cursive;
-    font-size: clamp(1.3rem, 4.5vw, 1.7rem);
-    color: var(--chalk-cream);
-    letter-spacing: 0.05em;
-  }
-
-  .oj-callout .oj-price {
-    font-size: clamp(1.8rem, 6vw, 2.5rem);
-    color: var(--chalk-gold);
-    display: block;
-    font-weight: 700;
-    line-height: 1.1;
-  }
-
-  /* Two column layout */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px 40px;
-    margin-bottom: 0;
-  }
-
-  @media (max-width: 560px) {
-    .two-col { grid-template-columns: 1fr; gap: 28px; }
-  }
-
-  .menu-section {
-    animation: fadeUp 0.7s ease both;
-  }
-
-  .menu-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 8px 0;
-    border-bottom: 1px dashed rgba(240,236,224,0.1);
-    font-size: clamp(0.88rem, 2.8vw, 1rem);
-    gap: 8px;
-  }
-
-  .menu-item:last-child { border-bottom: none; }
-
-  .item-name {
-    color: var(--chalk-white);
-    flex: 1;
-  }
-
-  .item-price {
-    color: var(--chalk-gold);
-    font-family: 'Caveat', cursive;
-    font-size: clamp(1rem, 3.2vw, 1.2rem);
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  /* Divider */
-  .divider {
-    border: none;
-    border-top: 1px solid rgba(240,236,224,0.15);
-    margin: 28px 0;
-  }
-
-  /* Chalk smudge decorations */
-  .smudge {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(40px);
-    opacity: 0.04;
-    pointer-events: none;
-  }
-  .smudge-1 { width: 300px; height: 200px; background: var(--chalk-gold); top: 5%; right: -10%; }
-  .smudge-2 { width: 250px; height: 250px; background: var(--chalk-blue); bottom: 20%; left: -8%; }
-
-  /* Footer */
-  .footer {
-    text-align: center;
-    margin-top: 36px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(240,236,224,0.12);
-    font-family: 'Caveat', cursive;
-    font-size: 1rem;
-    color: rgba(240,236,224,0.4);
-    letter-spacing: 0.1em;
-  }
-
-  /* Animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .combos-section { animation-delay: 0.1s; }
-  .oj-callout { animation: fadeUp 0.6s 0.25s ease both; }
-  .menu-section:nth-child(1) { animation-delay: 0.35s; }
-  .menu-section:nth-child(2) { animation-delay: 0.45s; }
-
-  .header { animation: fadeUp 0.7s ease both; }
+:root {
+  --bg: #0e0c0a;
+  --surface: #181410;
+  --card: #1e1a15;
+  --border: rgba(212,168,83,0.15);
+  --gold: #d4a853;
+  --gold-light: #e8c678;
+  --gold-dim: rgba(212,168,83,0.6);
+  --cream: #f0e6cc;
+  --cream-dim: rgba(240,230,204,0.55);
+  --text: #ede8dc;
+  --text-muted: rgba(237,232,220,0.5);
+  --red: #c0392b;
+  --cart-bg: #13100d;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:9999;
+  opacity:0.35;
+}
+.header {
+  position:sticky; top:0; z-index:100;
+  background:rgba(14,12,10,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  height:64px;
+}
+.logo { font-family:'Cormorant Garamond',serif; font-size:1.55rem; font-weight:700; color:var(--gold); letter-spacing:0.04em; line-height:1; }
+.logo span { display:block; font-size:0.62rem; font-family:'DM Sans',sans-serif; font-weight:400; letter-spacing:0.25em; text-transform:uppercase; color:var(--cream-dim); margin-top:2px; }
+.cart-btn {
+  position:relative; background:var(--gold); color:var(--bg); border:none; border-radius:50px;
+  padding:10px 20px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500;
+  cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s;
+}
+.cart-btn:hover { background:var(--gold-light); }
+.cart-count { background:var(--bg); color:var(--gold); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; }
+.hero { text-align:center; padding:48px 20px 36px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-60px; left:50%; transform:translateX(-50%); width:500px; height:300px; background:radial-gradient(ellipse,rgba(212,168,83,0.08) 0%,transparent 70%); pointer-events:none; }
+.hero-eyebrow { font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold-dim); margin-bottom:10px; }
+.hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,8vw,4rem); font-weight:700; color:var(--cream); line-height:1; margin-bottom:6px; }
+.hero-title em { color:var(--gold); font-style:italic; }
+.hero-sub { font-size:0.9rem; color:var(--text-muted); margin-bottom:28px; }
+.table-input-wrap { display:inline-flex; align-items:center; border:1px solid var(--border); border-radius:50px; overflow:hidden; background:var(--surface); transition:border-color 0.2s; }
+.table-input-wrap:focus-within { border-color:var(--gold); }
+.table-label { padding:12px 18px; font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold-dim); background:rgba(212,168,83,0.06); border-right:1px solid var(--border); white-space:nowrap; }
+#tableNumber { background:transparent; border:none; outline:none; color:var(--cream); font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:600; width:70px; text-align:center; padding:10px 14px; }
+#tableNumber::placeholder { color:rgba(240,230,204,0.2); font-size:1rem; }
+.menu-wrapper { max-width:860px; margin:0 auto; padding:0 16px 120px; }
+.section-label { display:flex; align-items:center; gap:14px; margin:36px 0 16px; }
+.section-label h2 { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; color:var(--gold); letter-spacing:0.08em; white-space:nowrap; }
+.section-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
+.combos-banner { background:linear-gradient(135deg,rgba(212,168,83,0.08),rgba(212,168,83,0.03)); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:8px; }
+.combo-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px dashed rgba(212,168,83,0.1); gap:12px; }
+.combo-row:last-child { border-bottom:none; padding-bottom:0; }
+.combo-info { flex:1; }
+.combo-name { font-size:0.95rem; color:var(--cream); margin-bottom:2px; }
+.combo-right { display:flex; align-items:center; gap:12px; }
+.price-tag { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:700; color:var(--gold); }
+.add-btn { width:34px; height:34px; border-radius:50%; border:1.5px solid var(--gold); background:transparent; color:var(--gold); font-size:1.3rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; line-height:1; }
+.add-btn:hover { background:var(--gold); color:var(--bg); transform:scale(1.08); }
+.add-btn.added { background:var(--gold); color:var(--bg); }
+.qty-control { display:flex; align-items:center; gap:8px; }
+.qty-btn { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); background:transparent; color:var(--cream); font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.qty-btn:hover { border-color:var(--gold); color:var(--gold); }
+.qty-num { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:700; color:var(--cream); min-width:18px; text-align:center; }
+.oj-note { text-align:center; font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--gold-dim); font-size:1rem; margin:12px 0 4px; }
+.menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; }
+.menu-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; gap:10px; transition:border-color 0.2s,transform 0.15s; }
+.menu-card:hover { border-color:rgba(212,168,83,0.35); transform:translateY(-1px); }
+.menu-card.in-cart { border-color:rgba(212,168,83,0.5); background:rgba(212,168,83,0.04); }
+.card-info { flex:1; min-width:0; }
+.card-name { font-size:0.92rem; color:var(--cream); margin-bottom:3px; }
+.card-price { font-family:'Cormorant Garamond',serif; font-size:1.05rem; font-weight:700; color:var(--gold); }
+.cart-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.cart-overlay.open { opacity:1; pointer-events:all; }
+.cart-drawer { position:fixed; right:0; top:0; bottom:0; width:min(420px,100vw); background:var(--cart-bg); border-left:1px solid var(--border); z-index:201; display:flex; flex-direction:column; transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+.cart-drawer.open { transform:translateX(0); }
+.cart-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.cart-title { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:700; color:var(--gold); }
+.cart-table-badge { background:rgba(212,168,83,0.1); border:1px solid var(--border); border-radius:50px; padding:4px 12px; font-size:0.78rem; color:var(--gold-dim); letter-spacing:0.1em; }
+.close-btn { background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer; line-height:1; transition:color 0.2s; }
+.close-btn:hover { color:var(--cream); }
+.cart-items { flex:1; overflow-y:auto; padding:16px 24px; }
+.cart-items::-webkit-scrollbar { width:4px; }
+.cart-items::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.cart-empty { text-align:center; padding:60px 20px; color:var(--text-muted); font-style:italic; font-family:'Cormorant Garamond',serif; font-size:1.1rem; }
+.cart-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(212,168,83,0.07); gap:10px; animation:slideIn 0.2s ease; }
+@keyframes slideIn { from{opacity:0;transform:translateX(10px)} to{opacity:1;transform:translateX(0)} }
+.ci-name { font-size:0.9rem; color:var(--cream); flex:1; }
+.ci-qty { font-family:'Cormorant Garamond',serif; font-size:0.85rem; color:var(--gold-dim); white-space:nowrap; }
+.ci-price { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:700; color:var(--gold); white-space:nowrap; min-width:52px; text-align:right; }
+.ci-remove { background:none; border:none; color:rgba(192,57,43,0.5); cursor:pointer; font-size:0.85rem; transition:color 0.15s; padding:2px 4px; }
+.ci-remove:hover { color:var(--red); }
+.cart-footer { padding:20px 24px; border-top:1px solid var(--border); background:var(--surface); }
+.cart-total-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px; }
+.cart-total-label { font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted); }
+.cart-total-amount { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700; color:var(--gold); }
+.order-btn { width:100%; padding:16px; background:var(--gold); color:var(--bg); border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+.order-btn:hover { background:var(--gold-light); transform:translateY(-1px); }
+.order-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:300; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; padding:20px; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:36px 32px; max-width:380px; width:100%; text-align:center; transform:scale(0.9); transition:transform 0.3s; }
+.modal-overlay.open .modal { transform:scale(1); }
+.modal-icon { font-size:3rem; margin-bottom:16px; }
+.modal-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:var(--gold); margin-bottom:8px; }
+.modal-msg { font-size:0.9rem; color:var(--text-muted); line-height:1.6; margin-bottom:24px; }
+.modal-detail { background:rgba(212,168,83,0.06); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:24px; text-align:left; }
+.modal-detail p { font-size:0.85rem; color:var(--cream); margin-bottom:4px; }
+.modal-detail p:last-child { margin-bottom:0; }
+.modal-detail strong { color:var(--gold); }
+.modal-btn { background:var(--gold); color:var(--bg); border:none; border-radius:8px; padding:12px 32px; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:500; cursor:pointer; transition:background 0.2s; }
+.modal-btn:hover { background:var(--gold-light); }
+/* Sending state */
+.sending { opacity:0.6; pointer-events:none; }
+@media(max-width:500px){.hero{padding:32px 16px 24px}.menu-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:360px){.menu-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="page-wrapper">
-  <div class="frame">
-    <div class="corner tl"></div>
-    <div class="corner tr"></div>
-    <div class="corner bl"></div>
-    <div class="corner br"></div>
 
-    <div class="smudge smudge-1"></div>
-    <div class="smudge smudge-2"></div>
+<header class="header">
+  <div class="logo">Bianca's Kitchen<span>Morning Bites</span></div>
+  <button class="cart-btn" onclick="toggleCart()">
+    🛒 Cart <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
 
-    <!-- Header -->
-    <div class="header">
-      <div class="header-illustrations">
-        <span class="illus">🧋</span>
-        <div>
-          <div class="title-breakfast">Breakfast</div>
-          <span class="title-menu">menu</span>
-        </div>
-        <span class="illus">🍩</span>
-      </div>
-      <div class="chalk-line"></div>
-    </div>
-
-    <!-- Combos -->
-    <div class="combos-section">
-      <div class="section-title">☕ Breakfast Combos</div>
-      <div class="combo-item">
-        <span class="combo-name">Coffee or tea served with toast or donut</span>
-        <span class="combo-dots"></span>
-        <span class="combo-price">$2.50</span>
-      </div>
-      <div class="combo-item">
-        <span class="combo-name">Coffee or tea with a breakfast sandwich</span>
-        <span class="combo-dots"></span>
-        <span class="combo-price">$3.60</span>
-      </div>
-      <div class="combo-item">
-        <span class="combo-name">Coffee or tea with pancakes</span>
-        <span class="combo-dots"></span>
-        <span class="combo-price">$4.50</span>
-      </div>
-    </div>
-
-    <!-- OJ callout -->
-    <div class="oj-callout">
-      <p>Add orange juice for <span class="oj-price">$1 🍊</span></p>
-    </div>
-
-    <hr class="divider">
-
-    <!-- Two column: Savory + Drinks -->
-    <div class="two-col">
-      <div class="menu-section">
-        <div class="section-title" style="font-size:1rem;">🥪 Savory Snacks</div>
-        <div class="menu-item"><span class="item-name">Egg &amp; cheese biscuit</span><span class="item-price">$1.80</span></div>
-        <div class="menu-item"><span class="item-name">Ham &amp; Egg Sandwich</span><span class="item-price">$1.80</span></div>
-        <div class="menu-item"><span class="item-name">Turkey &amp; cheddar slider</span><span class="item-price">$1.00</span></div>
-        <div class="menu-item"><span class="item-name">Bacon &amp; egg sandwich</span><span class="item-price">$1.50</span></div>
-      </div>
-
-      <div class="menu-section">
-        <div class="section-title" style="font-size:1rem;">☕ Drinks</div>
-        <div class="menu-item"><span class="item-name">Coffee / Tea</span><span class="item-price">$1.50</span></div>
-        <div class="menu-item"><span class="item-name">Milk</span><span class="item-price">$1.50</span></div>
-        <div class="menu-item"><span class="item-name">Hot chocolate</span><span class="item-price">$2.20</span></div>
-        <div class="menu-item"><span class="item-name">Chocolate milk</span><span class="item-price">$2.30</span></div>
-        <div class="menu-item"><span class="item-name">Cappuccino</span><span class="item-price">$1.70</span></div>
-        <div class="menu-item"><span class="item-name">Espresso with milk</span><span class="item-price">$1.70</span></div>
-        <div class="menu-item"><span class="item-name">Fresh orange juice</span><span class="item-price">$4.10</span></div>
-        <div class="menu-item"><span class="item-name">Bottled juice</span><span class="item-price">$1.50</span></div>
-        <div class="menu-item"><span class="item-name">Milkshakes</span><span class="item-price">$4.20</span></div>
-        <div class="menu-item"><span class="item-name">Soft drinks</span><span class="item-price">$1.50</span></div>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- Sweet options full width -->
-    <div class="menu-section" style="animation-delay:0.55s;">
-      <div class="section-title">🧁 Sweet Options</div>
-      <div class="two-col" style="margin-bottom:0;">
-        <div>
-          <div class="menu-item"><span class="item-name">Fresh fruit cup</span><span class="item-price">$2.50</span></div>
-          <div class="menu-item"><span class="item-name">Chocolate chip pancakes</span><span class="item-price">$3.20</span></div>
-          <div class="menu-item"><span class="item-name">Waffles with syrup</span><span class="item-price">$3.50</span></div>
-          <div class="menu-item"><span class="item-name">Apple pie</span><span class="item-price">$3.90</span></div>
-        </div>
-        <div>
-          <div class="menu-item"><span class="item-name">Banana bread</span><span class="item-price">$3.90</span></div>
-          <div class="menu-item"><span class="item-name">Blueberry muffin</span><span class="item-price">$3.90</span></div>
-          <div class="menu-item"><span class="item-name">Brownie with ice cream</span><span class="item-price">$4.00</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">✦ Good food, great mornings ✦</div>
+<div class="hero">
+  <p class="hero-eyebrow">Good Morning</p>
+  <h1 class="hero-title">Order Your <em>Breakfast</em></h1>
+  <p class="hero-sub">Select your items and place your order</p>
+  <div class="table-input-wrap">
+    <span class="table-label">Table No.</span>
+    <input type="number" id="tableNumber" placeholder="e.g. 5" min="1" max="99">
   </div>
 </div>
+
+<div class="menu-wrapper">
+  <div class="section-label"><h2>☕ Breakfast Combos</h2></div>
+  <div class="combos-banner" id="combos-list"></div>
+  <p class="oj-note">✦ Add fresh orange juice to any combo for just $1.00 ✦</p>
+
+  <div class="section-label"><h2>🥪 Savory Snacks</h2></div>
+  <div class="menu-grid" id="savory-list"></div>
+
+  <div class="section-label"><h2>🧁 Sweet Options</h2></div>
+  <div class="menu-grid" id="sweet-list"></div>
+
+  <div class="section-label"><h2>🥤 Drinks</h2></div>
+  <div class="menu-grid" id="drinks-list"></div>
+</div>
+
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <div>
+      <div class="cart-title">Your Order</div>
+      <div class="cart-table-badge" id="cartTableBadge">Table —</div>
+    </div>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">Your cart is empty.<br>Add items from the menu.</div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total Bill</span>
+      <span class="cart-total-amount" id="cartTotal">$0.00</span>
+    </div>
+    <button class="order-btn" id="orderBtn" onclick="placeOrder()">Place Order</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title">Order Placed!</div>
+    <p class="modal-msg">Your order has been sent to the kitchen. We'll have it ready for you shortly!</p>
+    <div class="modal-detail" id="orderSummaryModal"></div>
+    <button class="modal-btn" onclick="closeModal()">Got it, thanks!</button>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4mSeegQQ0FzohFSFwZ1QkODighU5qZWI",
+  authDomain: "biancas-kitchen-f9d57.firebaseapp.com",
+  databaseURL: "https://biancas-kitchen-f9d57-default-rtdb.firebaseio.com",
+  projectId: "biancas-kitchen-f9d57",
+  storageBucket: "biancas-kitchen-f9d57.firebasestorage.app",
+  messagingSenderId: "557958644252",
+  appId: "1:557958644252:web:d3777a098d20c89c5995d9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window._firebaseDb = db;
+window._firebaseRef = ref;
+window._firebasePush = push;
+window._firebaseReady = true;
+
+const menuData = {
+  combos: [
+    { id:'c1', name:'Coffee or tea with toast or donut', price:2.50 },
+    { id:'c2', name:'Coffee or tea with a breakfast sandwich', price:3.60 },
+    { id:'c3', name:'Coffee or tea with pancakes', price:4.50 },
+    { id:'c4', name:'Add orange juice', price:1.00 },
+  ],
+  savory: [
+    { id:'s1', name:'Egg & cheese biscuit', price:1.80 },
+    { id:'s2', name:'Ham & Egg Sandwich', price:1.80 },
+    { id:'s3', name:'Turkey & cheddar slider', price:1.00 },
+    { id:'s4', name:'Bacon & egg sandwich', price:1.50 },
+  ],
+  sweet: [
+    { id:'sw1', name:'Fresh fruit cup', price:2.50 },
+    { id:'sw2', name:'Chocolate chip pancakes', price:3.20 },
+    { id:'sw3', name:'Waffles with syrup', price:3.50 },
+    { id:'sw4', name:'Apple pie', price:3.90 },
+    { id:'sw5', name:'Banana bread', price:3.90 },
+    { id:'sw6', name:'Blueberry muffin', price:3.90 },
+    { id:'sw7', name:'Brownie with ice cream', price:4.00 },
+  ],
+  drinks: [
+    { id:'d1', name:'Coffee / Tea', price:1.50 },
+    { id:'d2', name:'Milk', price:1.50 },
+    { id:'d3', name:'Hot chocolate', price:2.20 },
+    { id:'d4', name:'Chocolate milk', price:2.30 },
+    { id:'d5', name:'Cappuccino', price:1.70 },
+    { id:'d6', name:'Espresso with milk', price:1.70 },
+    { id:'d7', name:'Fresh orange juice', price:4.10 },
+    { id:'d8', name:'Bottled juice', price:1.50 },
+    { id:'d9', name:'Milkshakes', price:4.20 },
+    { id:'d10', name:'Soft drinks', price:1.50 },
+  ]
+};
+
+let cart = {};
+const getQty = id => cart[id] ? cart[id].qty : 0;
+
+window.addItem = (id, name, price) => {
+  if (cart[id]) cart[id].qty++; else cart[id] = { id, name, price, qty:1 };
+  updateAll();
+};
+window.removeOne = id => {
+  if (!cart[id]) return;
+  cart[id].qty--;
+  if (cart[id].qty <= 0) delete cart[id];
+  updateAll();
+};
+window.removeItem = id => { delete cart[id]; updateAll(); };
+
+const cartTotal = () => Object.values(cart).reduce((s,i) => s + i.price * i.qty, 0);
+const cartCount = () => Object.values(cart).reduce((s,i) => s + i.qty, 0);
+
+function renderCombos() {
+  document.getElementById('combos-list').innerHTML = menuData.combos.map(item => {
+    const qty = getQty(item.id);
+    return `<div class="combo-row">
+      <div class="combo-info"><div class="combo-name">${item.name}</div></div>
+      <div class="combo-right">
+        <span class="price-tag">$${item.price.toFixed(2)}</span>
+        ${qty===0
+          ? `<button class="add-btn" onclick="addItem('${item.id}','${item.name.replace(/'/g,"\\'")}',${item.price})">+</button>`
+          : `<div class="qty-control">
+               <button class="qty-btn" onclick="removeOne('${item.id}')">−</button>
+               <span class="qty-num">${qty}</span>
+               <button class="qty-btn" onclick="addItem('${item.id}','${item.name.replace(/'/g,"\\'")}',${item.price})">+</button>
+             </div>`}
+      </div></div>`;
+  }).join('');
+}
+
+function renderGrid(containerId, items) {
+  document.getElementById(containerId).innerHTML = items.map(item => {
+    const qty = getQty(item.id);
+    return `<div class="menu-card ${qty>0?'in-cart':''}">
+      <div class="card-info">
+        <div class="card-name">${item.name}</div>
+        <div class="card-price">$${item.price.toFixed(2)}</div>
+      </div>
+      ${qty===0
+        ? `<button class="add-btn" onclick="addItem('${item.id}','${item.name.replace(/'/g,"\\'")}',${item.price})">+</button>`
+        : `<div class="qty-control">
+             <button class="qty-btn" onclick="removeOne('${item.id}')">−</button>
+             <span class="qty-num">${qty}</span>
+             <button class="qty-btn" onclick="addItem('${item.id}','${item.name.replace(/'/g,"\\'")}',${item.price})">+</button>
+           </div>`}
+    </div>`;
+  }).join('');
+}
+
+function renderCart() {
+  const items = Object.values(cart);
+  document.getElementById('cartItems').innerHTML = items.length === 0
+    ? '<div class="cart-empty">Your cart is empty.<br>Add items from the menu.</div>'
+    : items.map(i => `<div class="cart-item">
+        <div class="ci-name">${i.name}</div>
+        <div class="ci-qty">x${i.qty}</div>
+        <div class="ci-price">$${(i.price*i.qty).toFixed(2)}</div>
+        <button class="ci-remove" onclick="removeItem('${i.id}')">✕</button>
+      </div>`).join('');
+  document.getElementById('cartTotal').textContent = `$${cartTotal().toFixed(2)}`;
+  document.getElementById('cartCount').textContent = cartCount();
+  const tableNo = document.getElementById('tableNumber').value;
+  document.getElementById('cartTableBadge').textContent = tableNo ? `Table ${tableNo}` : 'Table —';
+  document.getElementById('orderBtn').disabled = items.length === 0 || !tableNo;
+}
+
+function updateAll() {
+  renderCombos();
+  renderGrid('savory-list', menuData.savory);
+  renderGrid('sweet-list', menuData.sweet);
+  renderGrid('drinks-list', menuData.drinks);
+  renderCart();
+}
+
+document.getElementById('tableNumber').addEventListener('input', renderCart);
+
+window.toggleCart = () => {
+  document.getElementById('cartDrawer').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+};
+
+window.placeOrder = async () => {
+  const tableNo = document.getElementById('tableNumber').value;
+  if (!tableNo) { alert('Please enter your table number!'); return; }
+  const items = Object.values(cart);
+  if (items.length === 0) { alert('Your cart is empty!'); return; }
+
+  const btn = document.getElementById('orderBtn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  const order = {
+    table: tableNo,
+    items: items,
+    total: cartTotal(),
+    time: new Date().toLocaleTimeString(),
+    timestamp: Date.now(),
+    status: 'pending'
+  };
+
+  try {
+    const ordersRef = ref(db, 'orders');
+    await push(ordersRef, order);
+
+    document.getElementById('orderSummaryModal').innerHTML = `
+      <p><strong>Table:</strong> ${tableNo}</p>
+      <p><strong>Items:</strong> ${items.map(i=>`${i.name} x${i.qty}`).join(', ')}</p>
+      <p><strong>Total:</strong> $${order.total.toFixed(2)}</p>`;
+
+    document.getElementById('successModal').classList.add('open');
+    window.toggleCart();
+  } catch(e) {
+    alert('Failed to send order. Please try again.');
+    console.error(e);
+  }
+
+  btn.textContent = 'Place Order';
+};
+
+window.closeModal = () => {
+  document.getElementById('successModal').classList.remove('open');
+  cart = {};
+  document.getElementById('tableNumber').value = '';
+  updateAll();
+};
+
+updateAll();
+</script>
 </body>
 </html>
